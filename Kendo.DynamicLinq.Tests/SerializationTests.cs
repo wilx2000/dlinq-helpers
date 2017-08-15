@@ -13,6 +13,9 @@ namespace Kendo.DynamicLinq.Tests
         public int Age { get; set; }
     }
 
+    /// <summary>
+    /// Test class
+    /// </summary>
     [TestFixture]
     public class SerializationTests
     {
