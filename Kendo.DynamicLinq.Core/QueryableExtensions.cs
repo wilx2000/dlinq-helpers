@@ -81,14 +81,15 @@ namespace Kendo.DynamicLinq
 			if (filter != null && filter.Logic != null)
 			{
 				// Collect a flat list of all filters
-				var filters = filter.All();
+				var filters = filter.All().Distinct().ToList();
 
-				// Get all filter values as array (needed by the Where method of Dynamic Linq)
-				var values = filters.Select(f => f.Value).ToArray();
+ 				// Create a predicate expression e.g. Field1 = @0 And Field2 > @1
+				//string predicate = filter.ToExpression(filters);
+                string predicate = filter.ToExpression(typeof(T), filters);
 
-				// Create a predicate expression e.g. Field1 = @0 And Field2 > @1
-				string predicate = filter.ToExpression(filters);
-
+                // Get all filter values as array (needed by the Where method of Dynamic Linq)
+                var values = filters.Select(f => f.ValueConverted).ToArray();
+                
 				// Use the Where method of Dynamic Linq to filter the data
 				queryable = queryable.Where(predicate, values);
 			}

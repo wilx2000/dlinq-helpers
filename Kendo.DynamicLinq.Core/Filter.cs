@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace Kendo.DynamicLinq
 {
@@ -24,11 +25,17 @@ namespace Kendo.DynamicLinq
         public string Operator { get; set; }
 
         /// <summary>
-        /// Gets or sets the filtering value. Set to <c>null</c> if the <c>Filters</c> property is set.
+        /// Gets or sets the string representation of filtering value. Set to <c>null</c> if the <c>Filters</c> property is set.
         /// </summary>
         [DataMember(Name = "value")]
-        public object Value { get; set; }
-
+        public String Value { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the filtering value.
+        /// </summary>
+        /// <value>The value.</value>
+        public Object ValueConverted { get; set; }
+        
         /// <summary>
         /// Gets or sets the filtering logic. Can be set to "or" or "and". Set to <c>null</c> unless <c>Filters</c> is set.
         /// </summary>
@@ -52,10 +59,14 @@ namespace Kendo.DynamicLinq
             {"lte", "<="},
             {"gt", ">"},
             {"gte", ">="},
+            {"isnull", "="},
+            {"isnotnull", "!="},
             {"startswith", "StartsWith"},
             {"endswith", "EndsWith"},
             {"contains", "Contains"},
-            {"doesnotcontain", "Contains"}
+            {"doesnotcontain", "Contains"},
+            {"isempty", ""},
+            {"isnotempty", "!" }
         };
 
         /// <summary>
@@ -91,20 +102,31 @@ namespace Kendo.DynamicLinq
         /// Converts the filter expression to a predicate suitable for Dynamic Linq e.g. "Field1 = @1 and Field2.Contains(@2)"
         /// </summary>
         /// <param name="filters">A list of flattened filters.</param>
-        public string ToExpression(IList<Filter> filters)
+        public string ToExpression(Type type, IList<Filter> filters)
         {
             if (Filters != null && Filters.Any())
             {
-                return "(" + String.Join(" " + Logic + " ", Filters.Select(filter => filter.ToExpression(filters)).ToArray()) + ")";
+                return "(" + String.Join(" " + Logic + " ", Filters.Select(filter => filter.ToExpression(type, filters)).ToArray()) + ")";
             }
 
             int index = filters.IndexOf(this);
 
             string comparison = operators[Operator];
-            
+
             if (Operator == "doesnotcontain")
             {
                 return String.Format("!{0}.{1}(@{2})", Field, comparison, index);
+            }
+
+            if (Operator == "isnotnull" || Operator == "isnull")
+            {
+                return String.Format("{0} {1} null", Field, comparison);
+            }
+
+            if (Operator == "isempty" || Operator == "isnotempty")
+            {
+                return String.Format("{1}string.IsNullOrEmpty({0})", Field, comparison);
+
             }
 
             if (comparison == "StartsWith" || comparison == "EndsWith" || comparison == "Contains")
@@ -112,7 +134,22 @@ namespace Kendo.DynamicLinq
                 return String.Format("{0}.{1}(@{2})", Field, comparison, index);
             }
 
+            ValueConverted = ToValue(type);
+            
             return String.Format("{0} {1} @{2}", Field, comparison, index);
+        }
+        
+        public Object ToValue(Type resultType)
+        {
+            var fields = resultType.GetRuntimeProperties();
+            foreach (var field in fields)
+                if (field.Name.Equals(Field, StringComparison.OrdinalIgnoreCase))
+	            {
+	                Type fieldType = field.PropertyType;
+                    var value = Convert.ChangeType(Value, fieldType);
+                    return value;
+	            }
+            return null;
         }
     }
 }

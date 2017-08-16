@@ -5,7 +5,7 @@
     <ReleaseVersion>1.6</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <PackageId>wilx.Kendo.DynamicLinq.Core</PackageId>
-    <PackageVersion>1.6</PackageVersion>
+    <PackageVersion>1.6.1</PackageVersion>
     <PackageProjectUrl>https://github.com/wilx2000/dlinq-helpers</PackageProjectUrl>
     <Summary>Add server paging, filtering and sorting via Dynamic Linq to Asp.Net Core projects</Summary>
     <PackageTags>dynamic Linq,.NetStandard,ASP NET Core,Kendo datasource</PackageTags>
