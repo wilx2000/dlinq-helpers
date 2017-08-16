@@ -102,13 +102,16 @@ namespace Kendo.DynamicLinq
         /// Converts the filter expression to a predicate suitable for Dynamic Linq e.g. "Field1 = @1 and Field2.Contains(@2)"
         /// </summary>
         /// <param name="filters">A list of flattened filters.</param>
-        public string ToExpression(Type type, IList<Filter> filters)
+        public string ToExpression(Type rsType, IList<Filter> filters)
         {
             if (Filters != null && Filters.Any())
             {
-                return "(" + String.Join(" " + Logic + " ", Filters.Select(filter => filter.ToExpression(type, filters)).ToArray()) + ")";
+                return "(" + String.Join(" " + Logic + " ", Filters.Select(filter => filter.ToExpression(rsType, filters)).ToArray()) + ")";
             }
 
+            if (ValueConverted == null)
+                ValueConverted = ToValue(rsType);
+            
             int index = filters.IndexOf(this);
 
             string comparison = operators[Operator];
@@ -134,8 +137,6 @@ namespace Kendo.DynamicLinq
                 return String.Format("{0}.{1}(@{2})", Field, comparison, index);
             }
 
-            ValueConverted = ToValue(type);
-            
             return String.Format("{0} {1} @{2}", Field, comparison, index);
         }
         
