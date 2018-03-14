@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <ReleaseVersion>1.6</ReleaseVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ReleaseVersion>2.0</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <PackageId>wilx.Kendo.DynamicLinq.Core</PackageId>
-    <PackageVersion>1.6.2</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <PackageProjectUrl>https://github.com/wilx2000/dlinq-helpers</PackageProjectUrl>
     <Summary>Add server paging, filtering and sorting via Dynamic Linq to Asp.Net Core projects</Summary>
     <PackageTags>dynamic Linq,.NetStandard,ASP NET Core,Kendo datasource</PackageTags>
@@ -14,9 +14,13 @@ This is a fork of the dlinq-helpers project.</Description>
     <PackOnBuild>true</PackOnBuild>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="wilx.System.Linq.Dynamic.Core" Version="1.6.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.2" />
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.1.248" />
+    <PackageReference Include="wilx.System.Linq.Dynamic.Core" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
   </ItemGroup>
 </Project>
