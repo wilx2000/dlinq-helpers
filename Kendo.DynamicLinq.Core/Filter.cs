@@ -116,27 +116,47 @@ namespace Kendo.DynamicLinq
 
             string comparison = operators[Operator];
 
+            Type type = GetType(rsType);
+
             if (Operator == "doesnotcontain")
             {
-                return String.Format("!{0}.{1}(@{2})", Field, comparison, index);
+                if (type == typeof(System.String))
+                    return String.Format("!{0}.ToLower().{1}(@{2})", Field, comparison, index);
+                else
+                    return String.Format("!{0}.{1}(@{2})", Field, comparison, index);
             }
 
             if (Operator == "isnotnull" || Operator == "isnull")
             {
+                if (type == typeof(System.String))
+                {
+                    if (Operator == "isnotnull")
+                        return String.Format("!String.IsNullOrEmpty({0})", Field);
+                    else
+                        return String.Format("String.IsNullOrEmpty({0})", Field);
+                }
                 return String.Format("{0} {1} null", Field, comparison);
             }
 
             if (Operator == "isempty" || Operator == "isnotempty")
             {
-                return String.Format("{1}string.IsNullOrEmpty({0})", Field, comparison);
+                return String.Format("{1}String.IsNullOrEmpty({0})", Field, comparison);
 
             }
 
             if (comparison == "StartsWith" || comparison == "EndsWith" || comparison == "Contains")
             {
-                return String.Format("{0}.{1}(@{2})", Field, comparison, index);
+                if (type == typeof(System.String))
+                    return String.Format("{0}.ToLower().{1}(@{2})", Field, comparison, index);
+                else
+                    return String.Format("{0}.{1}(@{2})", Field, comparison, index);
             }
 
+            if (Operator == "eq" && type == typeof(System.String)) 
+            {
+                return String.Format("{0}.ToLower().Equals(@{1})", Field, index);
+            }
+            
             return String.Format("{0} {1} @{2}", Field, comparison, index);
         }
         
@@ -148,8 +168,23 @@ namespace Kendo.DynamicLinq
 	            {
 	                Type fieldType = field.PropertyType;
                     var value = Convert.ChangeType(Value, fieldType);
+                    if (fieldType == typeof(System.String) && (Operator == "eq" || Operator == "contains" || Operator == "doesnotcontain" || Operator == "startswith" || Operator == "endswith"))
+                    {
+                        value = Value.ToLower();
+                    }
                     return value;
 	            }
+            return null;
+        }
+        
+        public Type GetType(Type resultType)
+        {
+            var fields = resultType.GetRuntimeProperties();
+            foreach (var field in fields)
+                if (field.Name.Equals(Field, StringComparison.OrdinalIgnoreCase))
+                {
+                    return field.PropertyType;
+                }
             return null;
         }
     }
