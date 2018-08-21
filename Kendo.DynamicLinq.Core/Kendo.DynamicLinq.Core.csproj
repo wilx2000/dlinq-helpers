@@ -8,10 +8,11 @@
     <PackageVersion>2.1.0</PackageVersion>
     <PackageProjectUrl>https://github.com/wilx2000/dlinq-helpers</PackageProjectUrl>
     <Summary>Add server paging, filtering and sorting via Dynamic Linq to Asp.Net Core projects</Summary>
-    <PackageTags>dynamic Linq,.NetStandard,ASP NET Core,Kendo datasource</PackageTags>
-    <Description>Add server paging, filtering and sorting via Dynamic Linq to Asp.Net Core projects.
-This is a fork of the dlinq-helpers project.</Description>
+    <PackageTags>dynamic Linq,.NetStandard,ASP NET Core,Kendo UI datasource</PackageTags>
+    <Description>This is a fork of the dlinq-helpers project. Add server paging, filtering and sorting via Dynamic Linq to Asp.Net Core projects.  Support Take, Skip, Sort, Filter, and Aggregate query parameters via QueryableExtensions class.
+</Description>
     <PackOnBuild>true</PackOnBuild>
+    <PackageReleaseNotes>Implements case-insensitive string comparison for Eq,  Contains, DoesNotContain, Startswith, and Endswith filter operators.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -22,7 +23,7 @@ This is a fork of the dlinq-helpers project.</Description>
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2">
         <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="wilx.System.Linq.Dynamic.Core" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
+    <PackageReference Include="wilx.System.Linq.Dynamic.Core" Version="2.*" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.*" />
   </ItemGroup>
 </Project>
